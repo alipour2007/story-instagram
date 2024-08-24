@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Story Viewer</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper/swiper-bundle.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="story.css" />
+  </head>
+
+  <body>
+
+    
+    <div class="story-thumbnails">
+      <div
+        class="story active"
+        data-contents='{
+          "thumbUrl": "images/cappuccino.jpg",
+          "text": "کاپوچینو",
+          "contents": [
+              {
+                  "type": "image",
+                  "url": "images/img1.jpg"
+              },
+              {
+                  "type": "image",
+                  "url": "images/img2.jpg"
+              }
+          ]
+      }'
+      >
+        <img
+          src="images/cappuccino.jpg"
+        />
+        <span>کاپوچینو</span>
+      </div>
+
+      <div
+        class="story"
+        data-contents='{
+          "thumbUrl": "images/coffee.jpg",
+          "text": "قهوه فوری",
+          "contents": [
+              {
+                  "type": "image",
+                  "url": "images/img3.jpg"
+              },
+              {
+                  "type": "image",
+                  "url": "images/img4.jpg"
+              }
+          ]
+      }'
+      >
+        <img
+          src="images/coffee.jpg"
+        />
+        <span>قهوه فوری</span>
+      </div>
+
+      <div
+        class="story"
+        data-contents='{
+          "thumbUrl": "images/nescafe.jpg",
+          "text": "نسکافه",
+          "contents": [
+              {
+                  "type": "video",
+                  "url": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+              },
+              {
+                  "type": "image",
+                  "url": "https://picsum.photos/id/0/367/267"
+              },
+              {
+                  "type": "image",
+                  "url": "https://picsum.photos/id/7/367/267"
+              }
+          ]
+      }'
+      >
+        <img
+          src="images/nescafe.jpg"
+        />
+        <span>نسکافه</span>
+      </div>
+    </div>
+
+
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="story.js"></script>
+  </body>
+</html>
