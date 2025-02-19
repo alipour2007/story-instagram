@@ -206,6 +206,7 @@ function StoryViewer(data, activeIndex) {
       let content = contents[contentIndex];
       const contentDiv = document.createElement("div");
       contentDiv.className = "content";
+
       let contentTag = null;
       if (content.type == "image") {
         contentTag = document.createElement("img");
@@ -222,6 +223,13 @@ function StoryViewer(data, activeIndex) {
         contentDiv.appendChild(contentTag);
         contentsContainer.appendChild(contentDiv);
         setTimelineDuation(contentTag, slideIndex, contentIndex);
+      }
+
+      if (content.rawHtml) {
+        let tempDiv = document.createElement("div");
+        tempDiv.classList.add("raw-html-container");
+        tempDiv.innerHTML = content.rawHtml;
+        contentDiv.appendChild(tempDiv);
       }
     }
     return contentsContainer;

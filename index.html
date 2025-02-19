@@ -4,10 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Interactive Story Viewer</title>
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/swiper/swiper-bundle.min.css"
-    />
+    <link rel="stylesheet" href="swiper.min.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -17,7 +14,6 @@
   </head>
 
   <body>
-    
     <div class="story-thumbnails">
       <div
         class="story active"
@@ -27,18 +23,18 @@
           "contents": [
               {
                   "type": "image",
-                  "url": "images/img1.jpg"
+                  "url": "images/img1.jpg",
+                  "rawHtml":"<span>برای خرید کلیک کنید</span>"
               },
               {
                   "type": "image",
-                  "url": "images/img2.jpg"
+                  "url": "images/img2.jpg",
+                  "rawHtml":"<span>برای خرید کلیک کنید</span>"
               }
           ]
       }'
       >
-        <img
-          src="images/cappuccino.jpg"
-        />
+        <img src="images/cappuccino.jpg" />
         <span>کاپوچینو</span>
       </div>
 
@@ -59,9 +55,7 @@
           ]
       }'
       >
-        <img
-          src="images/coffee.jpg"
-        />
+        <img src="images/coffee.jpg" />
         <span>قهوه فوری</span>
       </div>
 
@@ -86,15 +80,12 @@
           ]
       }'
       >
-        <img
-          src="images/nescafe.jpg"
-        />
+        <img src="images/nescafe.jpg" />
         <span>نسکافه</span>
       </div>
     </div>
 
-
-    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="swiper.min.js"></script>
     <script src="story.js"></script>
   </body>
 </html>
