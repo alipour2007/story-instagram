@@ -1,63 +1,48 @@
-// let stories = [
-//   {
-//     thumbUrl:
-//       "https://wpnab.ir/wp-content/uploads/2024/01/types-of-cappuccinos.jpg",
-//     text: "قهوه فوری",
-//     contents: [
-//       {
-//         type: "video",
-//         url: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-//       },
-//       {
-//         type: "image",
-//         url: "https://picsum.photos/id/0/367/267",
-//       },
-//       {
-//         type: "image",
-//         url: "https://picsum.photos/id/7/367/267",
-//       },
-//     ],
-//   },
-//   {
-//     thumbUrl:
-//       "https://www.brian-coffee-spot.com/wp-content/uploads/2023/08/Thumbnail-Bread-Friends-DSC_0885t-200x200.jpg",
-//     text: "کاپوچینو",
-//     contents: [
-//       {
-//         type: "video",
-//         url: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4",
-//       },
-//       {
-//         type: "image",
-//         url: "https://picsum.photos/id/11/367/267",
-//       },
-//       {
-//         type: "image",
-//         url: "https://picsum.photos/id/20/367/267",
-//       },
-//     ],
-//   },
-// ];
-
-// url: "https://via.placeholder.com/640x480?text=Story+2+Image+2",
-
-document.addEventListener("click", function (event) {
-  if (event.target.closest(".story-thumbnails .story")) {
-    let allData = Array.from(
-      event.target.closest(".story-thumbnails").querySelectorAll(".story")
-    ).map((x) => JSON.parse(x.getAttribute("data-contents")));
-
-    let story = event.target.closest(".story");
-    let index = Array.from(story.parentNode.children).indexOf(story);
-
-    new StoryViewer(allData, +index);
-  }
-});
-
-function StoryViewer(data, activeIndex) {
+function StoryViewer(data, selector, config) {
+  config = config || {};
   let swiperInstance = null;
   let storiesContainer = null;
   let swiperWrapper = null;
+  let activeIndex = 0;
+
+  function init() {
+    var storyThumbnails = document.createElement("div");
+    storyThumbnails.classList.add("story-thumbnails");
+
+    for (let i = 0; i < data.length; i++) {
+      let story = document.createElement("div");
+      story.classList.add("story");
+      let img = document.createElement("img");
+      let span = document.createElement("span");
+
+      img.src = data[i].thumbUrl;
+      span.innerText = data[i].text;
+
+      story.appendChild(img);
+      story.appendChild(span);
+      storyThumbnails.appendChild(story);
+    }
+    document.querySelector(selector).appendChild(storyThumbnails);
+    document.querySelector(selector).addEventListener("click", function (event) {
+      if (event.target.closest(".story-thumbnails .story")) {
+        let story = event.target.closest(".story");
+        activeIndex = Array.from(story.parentNode.children).indexOf(story);
+        show();
+      }
+    });
+  }
+
+  function popstate(event) {
+    destroy();
+  }
+
+  function handleKeyUp(event) {
+    if (event.key == "Escape") {
+      if (document.querySelector(".stories-container")) {
+        destroy();
+      }
+    }
+  }
 
   function show() {
     var htmlString = `
@@ -89,9 +74,7 @@ function StoryViewer(data, activeIndex) {
     for (let storyData of data) {
       const slideContainer = document.createElement("div");
       slideContainer.classList.add("swiper-slide");
-      slideContainer.appendChild(
-        createThumb(storyData.thumbUrl, storyData.text)
-      );
+      slideContainer.appendChild(createThumb(storyData.thumbUrl, storyData.text));
       slideContainer.appendChild(createTimeLines(storyData.contents.length));
       swiperWrapper.appendChild(slideContainer);
     }
@@ -126,6 +109,10 @@ function StoryViewer(data, activeIndex) {
         },
       },
     });
+
+    window.history.pushState({ __instaStory: true }, "");
+    document.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("popstate", popstate);
   }
 
   function forceBrowserRefresh() {
@@ -193,7 +180,6 @@ function StoryViewer(data, activeIndex) {
       timeLineSpan.addEventListener("animationend", handleAnimationEnd);
       timelineContainer.appendChild(timeLineSpan);
     }
-
     return timelineContainer;
   }
 
@@ -206,6 +192,10 @@ function StoryViewer(data, activeIndex) {
       let content = contents[contentIndex];
       const contentDiv = document.createElement("div");
       contentDiv.className = "content";
+
+      if (content.customCSS) {
+        contentDiv.classList.add(content.customCSS);
+      }
 
       let contentTag = null;
       if (content.type == "image") {
@@ -225,10 +215,10 @@ function StoryViewer(data, activeIndex) {
         setTimelineDuation(contentTag, slideIndex, contentIndex);
       }
 
-      if (content.rawHtml) {
+      if (content.link) {
         let tempDiv = document.createElement("div");
         tempDiv.classList.add("raw-html-container");
-        tempDiv.innerHTML = content.rawHtml;
+        tempDiv.innerHTML = content.link;
         contentDiv.appendChild(tempDiv);
       }
     }
@@ -237,14 +227,14 @@ function StoryViewer(data, activeIndex) {
 
   function setTimelineDuation(video, slideIndex, timelineIndex) {
     if (video.readyState >= 1) {
-      getSlideTimelines(slideIndex)[timelineIndex].querySelector(
-        ".progress"
-      ).style["animation-duration"] = `${video.duration}s`;
+      getSlideTimelines(slideIndex)[timelineIndex].querySelector(".progress").style[
+        "animation-duration"
+      ] = `${video.duration}s`;
     } else {
       video.addEventListener("loadedmetadata", function () {
-        getSlideTimelines(slideIndex)[timelineIndex].querySelector(
-          ".progress"
-        ).style["animation-duration"] = `${this.duration}s`;
+        getSlideTimelines(slideIndex)[timelineIndex].querySelector(".progress").style[
+          "animation-duration"
+        ] = `${this.duration}s`;
       });
     }
   }
@@ -281,9 +271,7 @@ function StoryViewer(data, activeIndex) {
 
   function showContent(contentIndex) {
     stopVideos();
-    let contents = getActiveSlide().querySelectorAll(
-      ".contents-container > .content"
-    );
+    let contents = getActiveSlide().querySelectorAll(".contents-container > .content");
 
     let allSlides = getAllSlides();
     let currentSlideIndex = getActiveSlideIndex();
@@ -319,11 +307,7 @@ function StoryViewer(data, activeIndex) {
     timeline.classList.remove("finished");
   }
 
-  function addStateClass(
-    timeline,
-    className,
-    forceRefreshAfterRemoveState = true
-  ) {
+  function addStateClass(timeline, className, forceRefreshAfterRemoveState = true) {
     removeAllStateClass(timeline);
     if (forceRefreshAfterRemoveState) {
       void document.documentElement.offsetWidth;
@@ -343,6 +327,13 @@ function StoryViewer(data, activeIndex) {
       swiperInstance = null;
       storiesContainer.remove();
     }, 200);
+
+    document.removeEventListener("keyup", handleKeyUp);
+    window.removeEventListener("popstate", popstate);
+
+    if (window.history.state && window.history.state.__instaStory) {
+      window.history.back();
+    }
   }
 
   function stopVideos() {
@@ -368,9 +359,7 @@ function StoryViewer(data, activeIndex) {
     let activeSlide = getActiveSlide();
     let activeSlideIndex = getActiveSlideIndex();
     let activeContent = activeSlide.querySelector(".content.active");
-    let allContents = Array.from(
-      activeSlide.querySelectorAll(".contents-container > .content")
-    );
+    let allContents = Array.from(activeSlide.querySelectorAll(".contents-container > .content"));
     let allTimeLines = getSlideTimelines(activeSlideIndex);
 
     if (!activeContent) {
@@ -391,11 +380,9 @@ function StoryViewer(data, activeIndex) {
 
   function getSlideTimelines(slideIndex) {
     return Array.from(
-      getAllSlides()[slideIndex].querySelectorAll(
-        ".timeline-container > .timeline"
-      )
+      getAllSlides()[slideIndex].querySelectorAll(".timeline-container > .timeline")
     );
   }
 
-  show();
+  init();
 }
