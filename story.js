@@ -7,7 +7,7 @@ function StoryViewer(data, selector, config) {
 
   function init() {
     var storyThumbnails = document.createElement("div");
-    storyThumbnails.classList.add("story-thumbnails");
+    storyThumbnails.classList.add("hiva-story-thumbnails");
 
     for (let i = 0; i < data.length; i++) {
       let story = document.createElement("div");
@@ -24,7 +24,7 @@ function StoryViewer(data, selector, config) {
     }
     document.querySelector(selector).appendChild(storyThumbnails);
     document.querySelector(selector).addEventListener("click", function (event) {
-      if (event.target.closest(".story-thumbnails .story")) {
+      if (event.target.closest(".hiva-story-thumbnails .story")) {
         let story = event.target.closest(".story");
         activeIndex = Array.from(story.parentNode.children).indexOf(story);
         show();
@@ -38,7 +38,7 @@ function StoryViewer(data, selector, config) {
 
   function handleKeyUp(event) {
     if (event.key == "Escape") {
-      if (document.querySelector(".stories-container")) {
+      if (document.querySelector(".hiva-story-modal")) {
         destroy();
       }
     }
@@ -46,7 +46,7 @@ function StoryViewer(data, selector, config) {
 
   function show() {
     var htmlString = `
-    <div class="stories-container">
+    <div class="hiva-story-modal">
       <i class="fa fa-times close"></i>
       <div class="swiper mySwiper">
         <div class="swiper-wrapper"></div>
